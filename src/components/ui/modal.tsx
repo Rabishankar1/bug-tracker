@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const ModalContainer = styled.div<{ $show: boolean }>`
@@ -46,20 +46,6 @@ const CloseButton = styled.span`
   &:focus {
     color: black;
     text-decoration: none;
-  }
-`;
-
-const OpenModalButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-
-  &:hover {
-    background-color: #0056b3;
   }
 `;
 

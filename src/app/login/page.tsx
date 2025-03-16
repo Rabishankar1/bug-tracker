@@ -95,8 +95,12 @@ export default function LoginPage() {
       validateUser(username, password);
       await login(username, password);
       router.push("/");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   }
 
@@ -132,7 +136,7 @@ export default function LoginPage() {
           <Button type="submit">Login</Button>
         </Form>
         <p style={{ textAlign: "center", marginTop: "16px" }}>
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <StyledLink href="/signup">Signup here</StyledLink>
         </p>
       </Card>

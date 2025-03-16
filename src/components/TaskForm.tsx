@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import styled from "styled-components";
 import {
   Title,
   Form,
@@ -12,6 +11,8 @@ import {
   Button,
 } from "@/styles/formStyles";
 import { useAuth } from "@/app/context/AuthProvider";
+import { Task } from "./Kanbanboard";
+import { getElapsedTime } from "@/utils/helpers";
 
 const typeOptions = ["Bug", "Feature", "Chore"];
 const priorityOptions = ["Low", "Medium", "High"];
@@ -31,8 +32,10 @@ interface TaskFormProps {
     priority: string;
     status: string;
     assignee: string;
+    createdAt?: string;
   }) => void;
   onCancel: () => void;
+  createdAt?: string;
 }
 
 export default function TaskForm({
@@ -42,6 +45,7 @@ export default function TaskForm({
   initialPriority = "Low",
   initialStatus = "Open",
   assignee = "",
+  createdAt,
   onSubmit,
   onCancel,
 }: TaskFormProps) {
@@ -69,13 +73,20 @@ export default function TaskForm({
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    onSubmit({ title, description, type, priority, status, assignee });
+    onSubmit({
+      title,
+      description,
+      type,
+      priority,
+      status,
+      assignee,
+      createdAt,
+    });
   }
 
-
-  // const availableStatusOptions = isManager
-  //   ? statusOptions
-  //   : statusOptions.filter((opt) => opt !== "Closed");
+  const availableStatusOptions = isManager
+    ? statusOptions
+    : statusOptions.filter((opt) => opt !== "Closed");
 
   return (
     <>
@@ -136,12 +147,19 @@ export default function TaskForm({
           onChange={(e) => setStatus(e.target.value)}
           disabled={!isManager && status === "Closed"}
         >
-          {statusOptions.map((opt) => (
+          {availableStatusOptions.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
             </option>
           ))}
         </Select>
+
+        {createdAt && (
+          <>
+            <Label>Time Elapsed</Label>
+            <span>{getElapsedTime(createdAt)}</span>
+          </>
+        )}
 
         <Button type="submit">
           {initialTitle ? "Update Task" : "Save Task"}

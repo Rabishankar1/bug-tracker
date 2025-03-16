@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import TaskForm from "./TaskForm";
-import { useAuth } from "@/app/context/AuthProvider";
 import { TaskContext } from "@/app/context/taskContext";
 import { updateTask } from "@/utils/localStorageHelpers";
+import { Task } from "./Kanbanboard";
 
 export default function EditTask({
   taskId,
@@ -14,7 +14,6 @@ export default function EditTask({
   close: () => void;
 }) {
   const { tasks, setTasks } = useContext(TaskContext);
-  const { user } = useAuth();
 
   const [initialValues, setInitialValues] = useState({
     title: "",
@@ -23,33 +22,21 @@ export default function EditTask({
     priority: "Low",
     status: "Open",
     assignee: "",
+    createdAt: "",
   });
 
   useEffect(() => {
-    const taskToEdit = tasks.find((task: any) => task.id === taskId);
-    if (taskToEdit) {
-      setInitialValues({
-        title: taskToEdit.title,
-        description: taskToEdit.description,
-        type: taskToEdit.type || "Bug",
-        priority: taskToEdit.priority,
-        status: taskToEdit.status,
-        assignee: taskToEdit.assignee,
-      });
+    const task = tasks.find((task: Task) => task.id === taskId);
+    if (task) {
+      setInitialValues(task);
     }
   }, [taskId, tasks]);
 
-  async function handleSubmit(formData: {
-    title: string;
-    description: string;
-    type: string;
-    priority: string;
-    status: string;
-    assignee: string;
-  }) {
+  // @ts-ignore
+  async function handleSubmit(formData: any) {
     const updatedTask = {
-      id: taskId,
       ...formData,
+      id: taskId,
       updatedAt: new Date().toISOString(),
     };
     const updatedTasks = updateTask(updatedTask);
@@ -70,6 +57,7 @@ export default function EditTask({
       assignee={initialValues.assignee}
       onSubmit={handleSubmit}
       onCancel={close}
+      createdAt={initialValues.createdAt}
     />
   );
 }

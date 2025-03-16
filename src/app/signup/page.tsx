@@ -129,8 +129,12 @@ export default function SignupPage() {
       signupUser(newUser);
       await login(username, password);
       router.push("/");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   }
 

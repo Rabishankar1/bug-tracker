@@ -56,8 +56,8 @@ export interface Task {
   assignee: string;
   status: string;
   description: string;
-  timerStart: number;
-  timeSpent: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface KanbanBoardProps {

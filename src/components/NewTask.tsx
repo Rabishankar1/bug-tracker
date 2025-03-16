@@ -4,14 +4,13 @@ import React, { useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 import TaskForm from "./TaskForm";
 import { addTask } from "@/utils/localStorageHelpers";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthProvider";
 import { TaskContext } from "@/app/context/taskContext";
+import { Task } from "./Kanbanboard";
 
 export default function NewTask({ close }: { close: () => void }) {
   const { user } = useAuth();
-  const router = useRouter();
-  const { tasks, setTasks } = useContext(TaskContext);
+  const { setTasks } = useContext(TaskContext);
 
   const assignee = user?.username || "";
 
@@ -23,13 +22,12 @@ export default function NewTask({ close }: { close: () => void }) {
     status: string;
     assignee: string;
   }) {
-    const newTask = {
+    const newTask: Task = {
       id: uuidv4(),
       ...formData,
       assignee,
       createdAt: new Date().toISOString(),
-      timeSpent: 0,
-      timerStart: null,
+      updatedAt: new Date().toISOString(),
     };
     const updatedTasks = addTask(newTask);
     if (updatedTasks) {
@@ -38,5 +36,7 @@ export default function NewTask({ close }: { close: () => void }) {
     close();
   }
 
-  return <TaskForm assignee={assignee} onSubmit={handleSubmit} onCancel={close} />;
+  return (
+    <TaskForm assignee={assignee} onSubmit={handleSubmit} onCancel={close} />
+  );
 }

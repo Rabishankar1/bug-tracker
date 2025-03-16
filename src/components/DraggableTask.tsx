@@ -1,13 +1,10 @@
+"use client";
+
 import styled from "styled-components";
 import { Task } from "./Kanbanboard";
 import { useAuth } from "../app/context/AuthProvider";
 
-interface TaskContainerProps {
-  priority: string;
-  disabled?: boolean;
-}
-
-const TaskContainer = styled.div<TaskContainerProps>`
+const TaskContainer = styled.div<{ priority: string; disabled?: boolean }>`
   background: #ffffff;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   border-left: 8px solid
@@ -117,6 +114,20 @@ const Button = styled.button`
   }
 `;
 
+function getElapsedTime(createdAt: string): string {
+  const created = new Date(createdAt);
+  const now = new Date();
+  const diffMs = now.getTime() - created.getTime();
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  if (days > 0) return `${days} day(s) ago`;
+  if (hours > 0) return `${hours} hour(s) ago`;
+  if (minutes > 0) return `${minutes} minute(s) ago`;
+  return `${seconds} second(s) ago`;
+}
+
 interface DraggableTaskProps {
   task: Task;
   handleDragStart: (task: Task) => void;
@@ -136,8 +147,6 @@ export default function DraggableTask({
 }: DraggableTaskProps) {
   const { user } = useAuth();
   const isManager = user?.role === "Manager";
-
-
   const disabledForDrag = !isManager && task.status === "Closed";
 
   const updateTaskPriority = (newPriority: string) => {
@@ -179,6 +188,11 @@ export default function DraggableTask({
       <FieldContainer>
         <FieldLabel>Description:</FieldLabel>
         <FieldValue>{task.description}</FieldValue>
+      </FieldContainer>
+
+      <FieldContainer>
+        <FieldLabel>Elapsed:</FieldLabel>
+        <FieldValue>{getElapsedTime(task.createdAt)}</FieldValue>
       </FieldContainer>
 
       <ButtonContainer>
