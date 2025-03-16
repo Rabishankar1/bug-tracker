@@ -4,7 +4,6 @@ import React, { useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 import TaskForm from "./TaskForm";
 import { saveTasks } from "@/utils/localStorageHelpers";
-import { useAuth } from "@/app/context/AuthProvider";
 import { TaskContext } from "@/app/context/taskContext";
 import { Task } from "./Kanbanboard";
 

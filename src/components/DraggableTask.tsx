@@ -153,7 +153,6 @@ export default function DraggableTask({
   const updateTaskPriority = (newPriority: string) => {
     handleStatusUpdate({ ...task, priority: newPriority });
   };
-  const allUsers = getUsers();
 
   return (
     <TaskContainer
