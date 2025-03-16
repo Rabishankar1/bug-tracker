@@ -32,11 +32,19 @@ export default function EditTask({
     }
   }, [taskId, tasks]);
 
-  // @ts-ignore
-  async function handleSubmit(formData: any) {
+  async function handleSubmit(formData: {
+    title: string;
+    description: string;
+    type: string;
+    priority: string;
+    status: string;
+    assignee: string;
+
+  }) {
     const updatedTask = {
       ...formData,
       id: taskId,
+      createdAt: initialValues.createdAt,
       updatedAt: new Date().toISOString(),
     };
     const updatedTasks = updateTask(updatedTask);

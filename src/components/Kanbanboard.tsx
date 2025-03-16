@@ -117,6 +117,8 @@ export default function KanbanBoard({ updateTaskStatus }: KanbanBoardProps) {
       ...task,
       id: Date.now().toString(),
       title: task.title + " (Copy)",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     setTasks([...tasks, newTask]);
     saveTasks([...tasks, newTask]);

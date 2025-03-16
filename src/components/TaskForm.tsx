@@ -11,7 +11,6 @@ import {
   Button,
 } from "@/styles/formStyles";
 import { useAuth } from "@/app/context/AuthProvider";
-import { Task } from "./Kanbanboard";
 import { getElapsedTime } from "@/utils/helpers";
 
 const typeOptions = ["Bug", "Feature", "Chore"];
