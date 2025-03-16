@@ -2,7 +2,7 @@
 
 import { Task } from "@/components/Kanbanboard";
 
-interface User {
+export interface User {
   id: string;
   username: string;
   password: string;
@@ -65,12 +65,6 @@ export function saveTasks(tasks: Task[]): void {
   }
 }
 
-export function addTask(task: Task): Task[] {
-  const tasks = getTasks();
-  tasks.push(task);
-  saveTasks(tasks);
-  return tasks;
-}
 
 export function updateTask(updatedTask: Task): Task[] | undefined {
   const tasks = getTasks();

@@ -49,15 +49,15 @@ const NewTaskLink = styled.a`
 `;
 
 export interface Task {
-  id: string;
+  id?: string;
   title: string;
   type: string;
   priority: string;
   assignee: string;
   status: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface KanbanBoardProps {
@@ -72,6 +72,7 @@ export default function KanbanBoard({ updateTaskStatus }: KanbanBoardProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [filterAssignee, setFilterAssignee] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -129,10 +130,12 @@ export default function KanbanBoard({ updateTaskStatus }: KanbanBoardProps) {
       filterPriority === "All" || task.priority === filterPriority;
     const matchesStatus =
       filterStatus === "All" || task.status === filterStatus;
+    const matchesAssignee =
+      filterAssignee === "All" || task.assignee === filterAssignee;
     const matchesSearch = task.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
-    return matchesPriority && matchesStatus && matchesSearch;
+    return matchesPriority && matchesStatus && matchesSearch && matchesAssignee;
   });
 
   const boardStatuses = ["Open", "In Progress", "Pending Approval", "Closed"];
@@ -145,18 +148,27 @@ export default function KanbanBoard({ updateTaskStatus }: KanbanBoardProps) {
       <TaskFilters
         filterPriority={filterPriority}
         filterStatus={filterStatus}
+        filterAssignee={filterAssignee}
+        onAssigneeChange={setFilterAssignee}
         onPriorityChange={setFilterPriority}
         onStatusChange={setFilterStatus}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
       <TaskContext.Provider value={{ tasks, setTasks }}>
-        <Modal opened={modalOpen} closeModal={() => setModalOpen(false)}>
-          <NewTask close={() => setModalOpen(false)} />
-        </Modal>
-        <Modal opened={!!isEditing} closeModal={() => setIsEditing(null)}>
-          <EditTask taskId={isEditing || ""} close={() => setIsEditing(null)} />
-        </Modal>
+        {modalOpen && (
+          <Modal opened={modalOpen} closeModal={() => setModalOpen(false)}>
+            <NewTask close={() => setModalOpen(false)} />
+          </Modal>
+        )}
+        {isEditing && (
+          <Modal opened={!!isEditing} closeModal={() => setIsEditing(null)}>
+            <EditTask
+              taskId={isEditing || ""}
+              close={() => setIsEditing(null)}
+            />
+          </Modal>
+        )}
         <ColumnsContainer>
           {boardStatuses.map((status) => (
             <TaskColumn
@@ -168,7 +180,7 @@ export default function KanbanBoard({ updateTaskStatus }: KanbanBoardProps) {
               handleDelete={handleDelete}
               handleStatusUpdate={handleStatusUpdate}
               setIsEditing={setIsEditing}
-              handleDuplicate={handleDuplicate} // <-- New prop added here
+              handleDuplicate={handleDuplicate}
             />
           ))}
         </ColumnsContainer>

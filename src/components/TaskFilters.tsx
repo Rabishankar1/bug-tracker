@@ -1,3 +1,4 @@
+import { getUsers } from "@/utils/localStorageHelpers";
 import React from "react";
 import styled from "styled-components";
 
@@ -71,15 +72,19 @@ interface TaskFiltersProps {
   filterPriority: string;
   filterStatus: string;
   searchQuery: string;
+  filterAssignee: string;
   onPriorityChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   onSearchChange: (value: string) => void;
+  onAssigneeChange: (value: string) => void;
 }
 
 export default function TaskFilters({
   filterPriority,
   filterStatus,
   searchQuery,
+  filterAssignee,
+  onAssigneeChange,
   onPriorityChange,
   onStatusChange,
   onSearchChange,
@@ -112,6 +117,22 @@ export default function TaskFilters({
               {option}
             </option>
           ))}
+        </Select>
+      </FilterGroup>
+      <FilterGroup>
+        <Label htmlFor="statusFilter">Assignee:</Label>
+        <Select
+          id="assigneeFilter"
+          value={filterAssignee}
+          onChange={(e) => onAssigneeChange(e.target.value)}
+        >
+          {[{ id: "All", value: "All", username: "All" }, ...getUsers()].map(
+            (user) => (
+              <option key={user.id} value={user.id}>
+                {user.username}
+              </option>
+            )
+          )}
         </Select>
       </FilterGroup>
       <FilterGroup>

@@ -33,6 +33,12 @@ const ModalContent = styled.div`
       transform: scale(1);
     }
   }
+  @media (max-width: 1000px) {
+    width: 60%;
+  }
+  @media (max-width: 600px) {
+    width: 80%;
+  }
 `;
 
 const CloseButton = styled.span`

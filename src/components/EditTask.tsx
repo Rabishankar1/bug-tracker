@@ -15,7 +15,7 @@ export default function EditTask({
 }) {
   const { tasks, setTasks } = useContext(TaskContext);
 
-  const [initialValues, setInitialValues] = useState({
+  const [initialValues, setInitialValues] = useState<Task>({
     title: "",
     description: "",
     type: "Bug",
@@ -23,6 +23,7 @@ export default function EditTask({
     status: "Open",
     assignee: "",
     createdAt: "",
+    updatedAt: "",
   });
 
   useEffect(() => {
@@ -57,15 +58,9 @@ export default function EditTask({
   return (
     <TaskForm
       key={taskId}
-      initialTitle={initialValues.title}
-      initialDescription={initialValues.description}
-      initialType={initialValues.type}
-      initialPriority={initialValues.priority}
-      initialStatus={initialValues.status}
-      assignee={initialValues.assignee}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       onCancel={close}
-      createdAt={initialValues.createdAt}
     />
   );
 }

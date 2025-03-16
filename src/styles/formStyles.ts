@@ -58,13 +58,13 @@ export const Select = styled.select`
   padding: 10px 40px 10px 12px;
   border-radius: 6px;
   transition: 0.2s ease-in-out;
-  background: linear-gradient(180deg, #fff, #f9f9f9)
+  background: #fff
     url("data:image/svg+xml,%3Csvg width='10' height='5' viewBox='0 0 10 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 5 5-5H0z' fill='%23666'/%3E%3C/svg%3E")
-    no-repeat right 10px center;
-  background-size: 10px 5px;
+    no-repeat right 12px center;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background-size: 10px 5px;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary || "#007BFF"};

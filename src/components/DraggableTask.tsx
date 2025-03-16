@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Task } from "./Kanbanboard";
 import { useAuth } from "../app/context/AuthProvider";
+import { getUsers } from "@/utils/localStorageHelpers";
 
 const TaskContainer = styled.div<{ priority: string; disabled?: boolean }>`
   background: #ffffff;
@@ -152,6 +153,7 @@ export default function DraggableTask({
   const updateTaskPriority = (newPriority: string) => {
     handleStatusUpdate({ ...task, priority: newPriority });
   };
+  const allUsers = getUsers();
 
   return (
     <TaskContainer
@@ -192,11 +194,18 @@ export default function DraggableTask({
 
       <FieldContainer>
         <FieldLabel>Elapsed:</FieldLabel>
-        <FieldValue>{getElapsedTime(task.createdAt)}</FieldValue>
+        <FieldValue>{getElapsedTime(task?.createdAt || "")}</FieldValue>
+      </FieldContainer>
+
+      <FieldContainer>
+        <FieldLabel>Assignee:</FieldLabel>
+        <FieldValue>
+          {getUsers().find((i) => i.id === task.assignee)?.username}
+        </FieldValue>
       </FieldContainer>
 
       <ButtonContainer>
-        <Button onClick={() => setIsEditing(task.id)}>Edit</Button>
+        <Button onClick={() => setIsEditing(task?.id || "")}>Edit</Button>
         <Button onClick={() => handleDuplicate(task)}>Duplicate</Button>
         {task.status === "Closed" && isManager && (
           <Button
@@ -207,7 +216,10 @@ export default function DraggableTask({
           </Button>
         )}
         {isManager && (
-          <Button className="delete" onClick={() => handleDelete(task.id)}>
+          <Button
+            className="delete"
+            onClick={() => handleDelete(task?.id || "")}
+          >
             Delete
           </Button>
         )}

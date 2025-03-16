@@ -12,84 +12,65 @@ import {
 } from "@/styles/formStyles";
 import { useAuth } from "@/app/context/AuthProvider";
 import { getElapsedTime } from "@/utils/helpers";
+import { getUsers, User } from "@/utils/localStorageHelpers";
+import { Task } from "./Kanbanboard";
 
 const typeOptions = ["Bug", "Feature", "Chore"];
 const priorityOptions = ["Low", "Medium", "High"];
 const statusOptions = ["Open", "In Progress", "Pending Approval", "Closed"];
 
 interface TaskFormProps {
-  initialTitle?: string;
-  initialDescription?: string;
-  initialType?: string;
-  initialPriority?: string;
-  initialStatus?: string;
-  assignee?: string;
-  onSubmit: (data: {
-    title: string;
-    description: string;
-    type: string;
-    priority: string;
-    status: string;
-    assignee: string;
-    createdAt?: string;
-  }) => void;
+  initialValues?: Task;
+  onSubmit: (data: Task) => void;
   onCancel: () => void;
   createdAt?: string;
 }
 
 export default function TaskForm({
-  initialTitle = "",
-  initialDescription = "",
-  initialType = "Bug",
-  initialPriority = "Low",
-  initialStatus = "Open",
-  assignee = "",
-  createdAt,
+  initialValues,
   onSubmit,
   onCancel,
 }: TaskFormProps) {
   const { user } = useAuth();
   const isManager = user?.role === "Manager";
-  const [title, setTitle] = useState(initialTitle);
-  const [description, setDescription] = useState(initialDescription);
-  const [type, setType] = useState(initialType);
-  const [priority, setPriority] = useState(initialPriority);
-  const [status, setStatus] = useState(initialStatus);
+  const availableStatusOptions = isManager
+    ? statusOptions
+    : statusOptions.filter((opt) => opt !== "Closed");
+  const allUsers = getUsers();
+
+  const [values, setValues] = useState<Task>({
+    title: "",
+    description: "",
+    type: typeOptions[0],
+    priority: priorityOptions[0],
+    status: availableStatusOptions[0],
+    assignee: allUsers[0].id,
+  });
 
   useEffect(() => {
-    setTitle(initialTitle);
-    setDescription(initialDescription);
-    setType(initialType);
-    setPriority(initialPriority);
-    setStatus(initialStatus);
-  }, [
-    initialTitle,
-    initialDescription,
-    initialType,
-    initialPriority,
-    initialStatus,
-  ]);
+    if (initialValues) {
+      setValues(initialValues);
+    }
+  }, [initialValues]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     onSubmit({
-      title,
-      description,
-      type,
-      priority,
-      status,
-      assignee,
-      createdAt,
+      ...values,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
-  const availableStatusOptions = isManager
-    ? statusOptions
-    : statusOptions.filter((opt) => opt !== "Closed");
+  const { title, description, type, priority, status, assignee, createdAt } =
+    values;
+  const handleSetValues = (key: string, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  };
 
   return (
     <>
-      <Title>{initialTitle ? "Edit Task" : "Create New Task"}</Title>
+      <Title>{initialValues ? "Edit Task" : "Create New Task"}</Title>
       <Form onSubmit={handleSubmit}>
         <Label htmlFor="title">Title</Label>
         <Input
@@ -97,7 +78,7 @@ export default function TaskForm({
           type="text"
           placeholder="Enter task title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => handleSetValues("title", e.target.value)}
           required
         />
 
@@ -106,7 +87,7 @@ export default function TaskForm({
           id="description"
           placeholder="Enter task description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => handleSetValues("description", e.target.value)}
           required
           rows={3}
         />
@@ -115,7 +96,7 @@ export default function TaskForm({
         <Select
           id="type"
           value={type}
-          onChange={(e) => setType(e.target.value)}
+          onChange={(e) => handleSetValues("type", e.target.value)}
           required
         >
           {typeOptions.map((opt) => (
@@ -129,7 +110,7 @@ export default function TaskForm({
         <Select
           id="priority"
           value={priority}
-          onChange={(e) => setPriority(e.target.value)}
+          onChange={(e) => handleSetValues("priority", e.target.value)}
           required
         >
           {priorityOptions.map((opt) => (
@@ -143,12 +124,25 @@ export default function TaskForm({
         <Select
           id="status"
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => handleSetValues("status", e.target.value)}
           disabled={!isManager && status === "Closed"}
         >
           {availableStatusOptions.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
+            </option>
+          ))}
+        </Select>
+
+        <Label htmlFor="status">Assignee</Label>
+        <Select
+          id="assignee"
+          value={assignee}
+          onChange={(e) => handleSetValues("assignee", e.target.value)}
+        >
+          {allUsers.map((user: User) => (
+            <option key={user.id} value={user.id}>
+              {user.username}
             </option>
           ))}
         </Select>
@@ -161,7 +155,7 @@ export default function TaskForm({
         )}
 
         <Button type="submit">
-          {initialTitle ? "Update Task" : "Save Task"}
+          {initialValues ? "Update Task" : "Save Task"}
         </Button>
         <Button className="cancel" type="button" onClick={onCancel}>
           Cancel
