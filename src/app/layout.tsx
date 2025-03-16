@@ -9,10 +9,8 @@ import Navbar from "@/components/Navbar";
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html>
@@ -23,7 +21,6 @@ export default function RootLayout({
             <AuthProvider>
               <Navbar />
               {children}
-              {modal}
             </AuthProvider>
           </StyledComponentsRegistry>
         </ThemeProvider>
