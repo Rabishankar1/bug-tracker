@@ -38,8 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(username: string, password: string) {
     const foundUser = validateUser(username, password);
     if (foundUser) {
-      const { id, role } = foundUser;
-      const userData = { id, username, role };
+      const { id, role } = foundUser as { id: string; role: "Developer" | "Manager" };
+      const userData: User = { id, username, role };
       setUser(userData);
       localStorage.setItem("loggedInUser", JSON.stringify(userData));
       return true;
