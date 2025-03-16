@@ -107,9 +107,8 @@ const StyledLink = styled.a`
   }
 `;
 
-export const roles = ["Developer", "Manager"];
-
 export default function SignupPage() {
+  const roles = ["Developer", "Manager"];
   const router = useRouter();
   const { login } = useAuth();
   const [username, setUsername] = useState("");
@@ -138,7 +137,6 @@ export default function SignupPage() {
     }
   }
 
-  // Generic change handler for username, password, and role
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
